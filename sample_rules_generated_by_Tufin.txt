@@ -1,0 +1,335 @@
+a6preprod-b-wf11
+
+	set security address-book "global" address "Host_10.18.35.111" 10.18.35.111/32
+    set security address-book "global" address "Host_10.18.35.110" 10.18.35.110/32
+    set security policies from-zone "core-c0-zaar2-ser-t2" to-zone "trust-c3-zaar2-ser-t2" policy "Rule_1" then permit
+    edit security policies from-zone "core-c0-zaar2-ser-t2" to-zone "trust-c3-zaar2-ser-t2" policy "Rule_1"
+    set match source-address "uat-server3-10.16.193.6"
+    set match source-address "isd-lg3-10.16.193.35"
+    set match source-address "isd-lg1-10.16.193.33"
+    set match source-address "isd-lg2-10.16.193.34"
+    set match destination-address "Host_10.18.35.110"
+    set match destination-address "Host_10.18.35.111"
+    set match application "tcp-1414-1420"
+    set description "Load Runner to POT eNAS MQ Servers"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.246.129" 10.32.246.129/32
+    set security address-book "global" address "Host_10.32.246.130" 10.32.246.130/32
+    set security address-book "global" address "Host_10.32.246.128" 10.32.246.128/32
+    set security policies from-zone "trust-c1-zaaa-ser-t2" to-zone "win-c0-zaaa-ser-t2" policy "Rule_1" then permit
+    edit security policies from-zone "trust-c1-zaaa-ser-t2" to-zone "win-c0-zaaa-ser-t2" policy "Rule_1"
+    set match source-address "gfmp-1011-10.18.0.112"
+    set match destination-address "Host_10.32.246.130"
+    set match destination-address "Host_10.32.246.128"
+    set match destination-address "Host_10.32.246.129"
+    set match application "tcp-1401"
+    set match application "tcp-1499"
+    set description "DEV DB Scan Ports RCC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.246.126" 10.32.246.126/32
+    set security address-book "global" address "Host_10.32.246.125" 10.32.246.125/32
+    set security address-book "global" address "Host_10.32.246.127" 10.32.246.127/32
+    set security address-book "global" address "Host_10.32.246.124" 10.32.246.124/32
+    set applications application "TCP_1452" protocol 6 destination-port 1452
+    set security policies from-zone "trust-c1-zaaa-ser-t2" to-zone "win-c0-zaaa-ser-t2" policy "Rule_2" then permit
+    edit security policies from-zone "trust-c1-zaaa-ser-t2" to-zone "win-c0-zaaa-ser-t2" policy "Rule_2"
+    set match source-address "gfmp-1011-10.18.0.112"
+    set match destination-address "Host_10.32.246.124"
+    set match destination-address "Host_10.32.246.125"
+    set match destination-address "Host_10.32.246.126"
+    set match destination-address "Host_10.32.246.127"
+    set match application "TCP_1452"
+    set match application "tcp-1402"
+    set description "DEV DB VIP Ports RCC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c2-zaaa-ser-t2" to-zone "win-c0-zaaa-ser-t2" policy "Rule_1" then permit
+    edit security policies from-zone "trust-c2-zaaa-ser-t2" to-zone "win-c0-zaaa-ser-t2" policy "Rule_1"
+    set match source-address "gfmp-1021-10.18.0.176"
+    set match destination-address "Host_10.32.246.130"
+    set match destination-address "Host_10.32.246.128"
+    set match destination-address "Host_10.32.246.129"
+    set match application "tcp-1401"
+    set match application "tcp-1499"
+    set description "DEV DB Scan Ports RCC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c2-zaaa-ser-t2" to-zone "win-c0-zaaa-ser-t2" policy "Rule_2" then permit
+    edit security policies from-zone "trust-c2-zaaa-ser-t2" to-zone "win-c0-zaaa-ser-t2" policy "Rule_2"
+    set match source-address "gfmp-1021-10.18.0.176"
+    set match destination-address "Host_10.32.246.124"
+    set match destination-address "Host_10.32.246.125"
+    set match destination-address "Host_10.32.246.126"
+    set match destination-address "Host_10.32.246.127"
+    set match application "TCP_1452"
+    set match application "tcp-1402"
+    set description "DEV DB VIP Ports RCC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.182.38" 10.32.182.38/32
+    set security address-book "global" address "Host_10.32.182.39" 10.32.182.39/32
+    set security address-book "global" address "Host_10.32.182.40" 10.32.182.40/32
+    set security policies from-zone "trust-c2-zaae-ser-t2" to-zone "win-c0-zaae-ser-t2" policy "Rule_1" then permit
+    edit security policies from-zone "trust-c2-zaae-ser-t2" to-zone "win-c0-zaae-ser-t2" policy "Rule_1"
+    set match source-address "aixau2106st0144-10.18.8.135"
+    set match source-address "aixau2106st0123-10.18.8.134"
+    set match destination-address "Host_10.32.182.39"
+    set match destination-address "Host_10.32.182.38"
+    set match destination-address "Host_10.32.182.40"
+    set match application "tcp-1301"
+    set match application "tcp-1399"
+    set description "TST Scan Ports WSDC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.182.34" 10.32.182.34/32
+    set security address-book "global" address "Host_10.32.182.36" 10.32.182.36/32
+    set security address-book "global" address "Host_10.32.182.35" 10.32.182.35/32
+    set security address-book "global" address "Host_10.32.182.37" 10.32.182.37/32
+    set security policies from-zone "trust-c2-zaae-ser-t2" to-zone "win-c0-zaae-ser-t2" policy "Rule_2" then permit
+    edit security policies from-zone "trust-c2-zaae-ser-t2" to-zone "win-c0-zaae-ser-t2" policy "Rule_2"
+    set match source-address "aixau2106st0144-10.18.8.135"
+    set match source-address "aixau2106st0123-10.18.8.134"
+    set match destination-address "Host_10.32.182.37"
+    set match destination-address "Host_10.32.182.34"
+    set match destination-address "Host_10.32.182.35"
+    set match destination-address "Host_10.32.182.36"
+    set match application "tcp-1302"
+    set match application "tcp-1352-4hr-timeout"
+    set description "TST DB VIP Ports WSDC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c2-zaae-ser-t2" to-zone "win-c0-zaae-ser-t2" policy "Rule_3" then permit
+    edit security policies from-zone "trust-c2-zaae-ser-t2" to-zone "win-c0-zaae-ser-t2" policy "Rule_3"
+    set match source-address "aixau2106st0144-10.18.8.135"
+    set match source-address "aixau2106st0123-10.18.8.134"
+    set match destination-address "Host_10.32.246.130"
+    set match destination-address "Host_10.32.246.128"
+    set match destination-address "Host_10.32.246.129"
+    set match application "tcp-1301"
+    set match application "tcp-1399"
+    set description "TST Scan Ports RCC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c2-zaae-ser-t2" to-zone "win-c0-zaae-ser-t2" policy "Rule_4" then permit
+    edit security policies from-zone "trust-c2-zaae-ser-t2" to-zone "win-c0-zaae-ser-t2" policy "Rule_4"
+    set match source-address "aixau2106st0144-10.18.8.135"
+    set match source-address "aixau2106st0123-10.18.8.134"
+    set match destination-address "Host_10.32.246.124"
+    set match destination-address "Host_10.32.246.125"
+    set match destination-address "Host_10.32.246.126"
+    set match destination-address "Host_10.32.246.127"
+    set match application "tcp-1302"
+    set match application "tcp-1352-4hr-timeout"
+    set description "TST DB VIP Ports RCC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_1" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_1"
+    set match source-address "g-GFMP-wsdc-svp-pprod"
+    set match destination-address "Host_10.32.246.130"
+    set match destination-address "Host_10.32.246.128"
+    set match destination-address "Host_10.32.246.129"
+    set match application "tcp-1201"
+    set match application "tcp-1299"
+    set description "SVP DB Scan Ports RCC"
+    set then log session-init
+    exit
+    set applications application "TCP_1252" protocol 6 destination-port 1252
+    set security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_2" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_2"
+    set match source-address "g-GFMP-wsdc-svp-pprod"
+    set match destination-address "Host_10.32.246.124"
+    set match destination-address "Host_10.32.246.125"
+    set match destination-address "Host_10.32.246.126"
+    set match destination-address "Host_10.32.246.127"
+    set match application "TCP_1252"
+    set match application "tcp-1202"
+    set description "SVP DB VIP Ports RCC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_3" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_3"
+    set match source-address "g-GFMP-wsdc-svp-pprod"
+    set match destination-address "Host_10.32.182.39"
+    set match destination-address "Host_10.32.182.38"
+    set match destination-address "Host_10.32.182.40"
+    set match application "tcp-1201"
+    set match application "tcp-1299"
+    set description "SVP DB Scan Ports WSDC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_4" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_4"
+    set match source-address "g-GFMP-wsdc-svp-pprod"
+    set match destination-address "Host_10.32.182.37"
+    set match destination-address "Host_10.32.182.34"
+    set match destination-address "Host_10.32.182.35"
+    set match destination-address "Host_10.32.182.36"
+    set match application "TCP_1252"
+    set match application "tcp-1202"
+    set description "SVP DB VIP Ports WSDC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.182.130" 10.32.182.130/32
+    set security address-book "global" address "Host_10.32.182.129" 10.32.182.129/32
+    set security address-book "global" address "Host_10.32.182.128" 10.32.182.128/32
+    set security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_5" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_5"
+    set match source-address "g-GFMP-wsdc-svp-pprod"
+    set match destination-address "Host_10.32.182.130"
+    set match destination-address "Host_10.32.182.129"
+    set match destination-address "Host_10.32.182.128"
+    set match application "tcp-1201"
+    set match application "tcp-1299"
+    set description "SVP DB Scan Ports WSDC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.182.127" 10.32.182.127/32
+    set security address-book "global" address "Host_10.32.182.126" 10.32.182.126/32
+    set security address-book "global" address "Host_10.32.182.124" 10.32.182.124/32
+    set security address-book "global" address "Host_10.32.182.125" 10.32.182.125/32
+    set security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_6" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t2" to-zone "win-c0-zaaj-ser-t2" policy "Rule_6"
+    set match source-address "g-GFMP-wsdc-svp-pprod"
+    set match destination-address "Host_10.32.182.124"
+    set match destination-address "Host_10.32.182.127"
+    set match destination-address "Host_10.32.182.126"
+    set match destination-address "Host_10.32.182.125"
+    set match application "TCP_1252"
+    set match application "tcp-1202"
+    set description "SVP DB VIP Ports WSDC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c3-zaar2-ser-t2" to-zone "core-c0-zaar2-ser-t2" policy "Rule_1" then permit
+    edit security policies from-zone "trust-c3-zaar2-ser-t2" to-zone "core-c0-zaar2-ser-t2" policy "Rule_1"
+    set match source-address "Host_10.18.35.110"
+    set match source-address "Host_10.18.35.111"
+    set match destination-address "uat-server3-10.16.193.6"
+    set match destination-address "isd-lg3-10.16.193.35"
+    set match destination-address "isd-lg1-10.16.193.33"
+    set match destination-address "isd-lg2-10.16.193.34"
+    set match application "tcp-1414-1420"
+    set description "POT eNAS MQ Servers to Load Runner"
+    set then log session-init
+    exit
+
+a6preprod-a-wf11
+
+    set security address-book "global" address "Host_10.32.246.128" 10.32.246.128/32
+    set security address-book "global" address "Host_10.32.246.129" 10.32.246.129/32
+    set security address-book "global" address "Host_10.32.246.130" 10.32.246.130/32
+    set security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_1" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_1"
+    set match source-address "g-GFMP-rcc-uat-pprod"
+    set match destination-address "Host_10.32.246.129"
+    set match destination-address "Host_10.32.246.130"
+    set match destination-address "Host_10.32.246.128"
+    set match application "tcp-1399"
+    set match application "tcp-1301"
+    set description "TST DB Scan Ports RCC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.246.124" 10.32.246.124/32
+    set security address-book "global" address "Host_10.32.246.126" 10.32.246.126/32
+    set security address-book "global" address "Host_10.32.246.127" 10.32.246.127/32
+    set security address-book "global" address "Host_10.32.246.125" 10.32.246.125/32
+    set applications application "TCP_1352" protocol 6 destination-port 1352
+    set security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_2" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_2"
+    set match source-address "g-GFMP-rcc-uat-pprod"
+    set match destination-address "Host_10.32.246.126"
+    set match destination-address "Host_10.32.246.127"
+    set match destination-address "Host_10.32.246.125"
+    set match destination-address "Host_10.32.246.124"
+    set match application "TCP_1352"
+    set match application "tcp-1302"
+    set description "TST DB VIP Ports RCC"
+    set then log session-init
+    exit
+    set security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_3" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_3"
+    set match source-address "host-10.15.16.134"
+    set match destination-address "Host_10.32.246.129"
+    set match destination-address "Host_10.32.246.130"
+    set match destination-address "Host_10.32.246.128"
+    set match application "tcp-1299"
+    set match application "tcp-1201"
+    set description "SVP DB Scan Ports RCC"
+    set then log session-init
+    exit
+    set applications application "TCP_1252" protocol 6 destination-port 1252
+    set security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_4" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_4"
+    set match source-address "host-10.15.16.134"
+    set match destination-address "Host_10.32.246.126"
+    set match destination-address "Host_10.32.246.127"
+    set match destination-address "Host_10.32.246.125"
+    set match destination-address "Host_10.32.246.124"
+    set match application "tcp-1202"
+    set match application "TCP_1252"
+    set description "SVP DB VIP Ports RCC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.182.40" 10.32.182.40/32
+    set security address-book "global" address "Host_10.32.182.39" 10.32.182.39/32
+    set security address-book "global" address "Host_10.32.182.38" 10.32.182.38/32
+    set security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_5" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_5"
+    set match source-address "host-10.15.16.134"
+    set match destination-address "Host_10.32.182.38"
+    set match destination-address "Host_10.32.182.39"
+    set match destination-address "Host_10.32.182.40"
+    set match application "tcp-1299"
+    set match application "tcp-1201"
+    set description "SVP DB Scan Ports WSDC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.182.36" 10.32.182.36/32
+    set security address-book "global" address "Host_10.32.182.37" 10.32.182.37/32
+    set security address-book "global" address "Host_10.32.182.34" 10.32.182.34/32
+    set security address-book "global" address "Host_10.32.182.35" 10.32.182.35/32
+    set security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_6" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_6"
+    set match source-address "host-10.15.16.134"
+    set match destination-address "Host_10.32.182.36"
+    set match destination-address "Host_10.32.182.34"
+    set match destination-address "Host_10.32.182.37"
+    set match destination-address "Host_10.32.182.35"
+    set match application "tcp-1202"
+    set match application "TCP_1252"
+    set description "SVP DB VIP Ports WSDC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.182.130" 10.32.182.130/32
+    set security address-book "global" address "Host_10.32.182.129" 10.32.182.129/32
+    set security address-book "global" address "Host_10.32.182.128" 10.32.182.128/32
+    set security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_7" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_7"
+    set match source-address "host-10.15.16.134"
+    set match destination-address "Host_10.32.182.130"
+    set match destination-address "Host_10.32.182.128"
+    set match destination-address "Host_10.32.182.129"
+    set match application "tcp-1299"
+    set match application "tcp-1201"
+    set description "SVP DB Scan Ports WSDC"
+    set then log session-init
+    exit
+    set security address-book "global" address "Host_10.32.182.124" 10.32.182.124/32
+    set security address-book "global" address "Host_10.32.182.127" 10.32.182.127/32
+    set security address-book "global" address "Host_10.32.182.126" 10.32.182.126/32
+    set security address-book "global" address "Host_10.32.182.125" 10.32.182.125/32
+    set security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_8" then permit
+    edit security policies from-zone "trust-c2-zaaj-ser-t1" to-zone "win-c0-zaaj-ser-t1" policy "Rule_8"
+    set match source-address "host-10.15.16.134"
+    set match destination-address "Host_10.32.182.124"
+    set match destination-address "Host_10.32.182.127"
+    set match destination-address "Host_10.32.182.125"
+    set match destination-address "Host_10.32.182.126"
+    set match application "tcp-1202"
+    set match application "TCP_1252"
+    set description "SVP DB VIP Ports WSDC"
+    set then log session-init
+    exit
+

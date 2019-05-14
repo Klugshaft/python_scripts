@@ -1,0 +1,21 @@
+Value PolicyName (\S+)
+Value FromZone (\S+)
+Value ToZone (\S+)
+Value List Source (\S+)
+Value List Destination (\S+)
+Value List Port (\S+)
+Value Action (permit|deny)
+Value log (\S+)
+Value Desc (.*)
+
+
+Start
+	^\s*set security policies from-zone "${FromZone}" to-zone "${ToZone}" policy "${PolicyName}" then ${Action} -> Continue
+	^\s*set\smatch\ssource-address\s"${Source}" 
+	^\s*set\smatch\sdestination-address\s"${Destination}" 
+	^\s*set\smatch\sapplication\s"${Port}" 
+	^\s*set\sdescription\s"${Desc}" -> Continue
+	^\s*set\sthen\slog\s${log} -> Record
+	^\s*exit -> Start
+		
+		
