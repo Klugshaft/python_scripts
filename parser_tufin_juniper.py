@@ -5,14 +5,14 @@ import sys
 
 # -show route | no more - command to list route table in Juniper SRX and save
 #change the file name below to your output file
-raw_file = "C:/wbc_project/python_scripts/18801_EPS_rules.txt"
+raw_file = "/python_scripts/sample_rules_generated_by_Tufin.txt"
 input_rawfile = open(raw_file, 'r')
 raw_text_data = input_rawfile.read()
 input_rawfile.close()
 #print(raw_text_data)
 #open template file and initialize a new TextFSM object with it
 
-template_file = "C:/wbc_project/python_scripts/juniper_policy_tmpla.txt"
+template_file = "/python_scripts/juniper_policy_tmpla.txt"
 template = open(template_file, 'r')
 re_table = tfm.TextFSM(template)
 
@@ -22,7 +22,7 @@ fsm_rt_list = re_table.ParseText(raw_text_data)
 #write out result as a csv formatted file below
 
 #change the filename below for your output file
-outfile_name = "juniper_policy_tuf18801.csv"
+outfile_name = "juniper_policy_tuf.csv"
 outfile = open(outfile_name, 'w')
 
 # Print header
