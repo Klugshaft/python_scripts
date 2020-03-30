@@ -1,0 +1,134 @@
+<html>
+<!-- HTML frontend to generate Juniper firewall rules. by L137493 20200330 v1.0 -->
+<head>
+<style>
+textarea {
+	min-height: 10em;
+	max-height: 50vh;
+	width: 70%;
+}
+</style>
+</head>
+<h2> Juniper firewall rules generator  </h2>
+<form id="fwrform">
+
+	<p><h3> Create Address objects, leave empty if not needed </h1></p>
+	<label for="addrname">IP object name :</label>
+	<input type="text" name="addrname" value=""></p>
+	<label for="ipaddr">IP or Subnet address </label>
+	<input type="text" name="ipaddr" value=""></p>
+	<label for="globaladdrbk">Global address book </label>
+	<input type="checkbox" name="globaladdrbk" checked="true"></p>
+	<br>
+
+	<p><h3> create SRX ports, leave empty if not needed </h1></p>
+	<label for="port_name">Port name :</label>
+	<input type="text" name="port_name" value=""></p>
+	<label for="port_type">tcp or udp </label>
+	<input type="text" name="port_type" value=""></p>
+	<label for="port_num">Destination port number or range:</label>
+	<input type="text" name="port_num" value=""></p>
+	<br>
+	
+	<p><h3> Enter details below to create policy </h1></p>	
+	<label for="policyname">Policy Name</label>
+	<input type="text" name="policyname" value="-Rule-"></p>
+	<label for="srcobj">Enter source object(s)  separated by comma:</label>
+	<input type="text" size = "80" name="source_object" value="source_object"></p>
+	<label for="destobj">Enter destination object(s) separated by comma:</label>
+	<input type="text" size = "80" name="destination_object" value="destination objects"></p>
+	<label for="fromzone">From Zone:</label>
+	<input type="text" name="from_zone" value="from zone"></p>
+	<label for="tozone">To Zone:</label>
+	<input type="text" name="to_zone" value="to zone"></p>
+	<label for="ports">Ports(separated by comma):</label>
+	<input type="text" size = "50" name="ports" value="ports"></p>
+	<label for="cosval">Class of Service Rule set name (use "none" if it's not required):</label>
+	<input type="text" name="cosval" value="none"></p>
+	<label for="action">Action:</label>
+	<input type="text" name="action" value="permit"></p>
+	<label for="log">Log:</label>
+	<input type="text" name="log" value="session-init"></p>
+</form>
+<p>Click the following button to generate firewall rules for Junos OS</p>      
+<button onclick = 'genfwrules()' >Generate firewall rules</button>
+<button onclick = 'genobjstatement()' > create Address objects </button>
+<button onclick = 'genportstatement()'> create application objects </button>
+<button onclick = 'cleartxt()' >Reset</button>
+<p>
+<textarea id="fwrules" row="100" cols="120">
+</textarea>
+</p>
+<script type = "text/javascript">
+function cleartxt() {
+
+	document.getElementById("fwrules").innerHTML = "" ;
+	}
+function genobjstatement() {
+
+	var form = document.getElementById("fwrform") ;
+	var addressobj = form.addrname.value;
+	var ipaddress = form.ipaddr.value;
+	var isglobaladdrbk = form.globaladdrbk.checked;
+	if ( isglobaladdrbk == true ) {
+	
+	document.getElementById("fwrules").innerHTML += "set security address-book global address " + addressobj + " " + ipaddress + "\n";
+	} else {
+	document.getElementById("fwrules").innerHTML += "set security address-book address " + addressobj + " " + ipaddress + "\n";
+	}
+}
+
+function genportstatement() {
+
+// set applications application tcp-30141-30142 protocol tcp destination-port 30141-30142 
+	var form = document.getElementById("fwrform") ;
+	var portname = form.port_name.value;
+	var porttype = form.port_type.value;
+	var portnum = form.port_num.value;
+	
+	document.getElementById("fwrules").innerHTML += "set applications application " + portname + " protocol " + porttype + " destination-port " + portnum + "\n" ;
+}
+	
+function genfwrules() {
+	
+	var form = document.getElementById("fwrform") ; 
+	var polname = form.policyname;
+	var srcobj = form.source_object;
+	var frmzone = form.from_zone;
+	var dstobj = form.destination_object;
+	var tozone = form.to_zone;
+	var ports = form.ports;
+	var action = form.action;
+	var logopt = form.log;
+	var cosval = form.cosval.value ;
+	
+		
+	var srcobjs = srcobj.value.split(",")
+	for (i = 0; i < srcobjs.length; i ++ ) { 
+		document.getElementById("fwrules").innerHTML += "set security policies from-zone " + frmzone.value + " to-zone " + tozone.value + " policy " + polname.value + " match source-address " + srcobjs[i] + "\n" ;
+	}
+	
+	var dstobjs = dstobj.value.split(",")
+	for (j = 0; j < dstobjs.length; j++ ){
+		document.getElementById("fwrules").innerHTML += "set security policies from zone " + frmzone.value + " to-zone " + tozone.value + " policy " + polname.value + " match destination-address " +dstobjs[j] + "\n";
+	}
+	
+	var ports = ports.value.split(",")
+	for (k = 0; k < ports.length; k ++ ) {
+		document.getElementById("fwrules").innerHTML += "set security policies from-zone " + frmzone.value + " to-zone " + tozone.value + " policy " + polname.value + " match application " + ports[k] + "\n" ;
+	}
+	
+	var action = action.value
+	if ( cosval == 'none' ) { 
+			document.getElementById("fwrules").innerHTML += "set security policies from-zone " + frmzone.value + " to-zone " + tozone.value + " policy " + polname.value + " then " + action + "\n";
+	} else {
+			document.getElementById("fwrules").innerHTML += "set security policies from-zone " + frmzone.value + " to-zone " + tozone.value + " policy " + polname.value + " then " + action + " application-services application-traffic-control rule-set " + cosval + "\n";
+	}	
+		
+	var log_opt = logopt.value
+	document.getElementById("fwrules").innerHTML += "set security policies from-zone " + frmzone.value + " to-zone " + tozone.value + " policy " + polname.value + " then log " + log_opt + "\n\n" ;
+   
+
+}
+</script>
+</html>
