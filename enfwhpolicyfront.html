@@ -1,0 +1,381 @@
+<html>
+<!-- HTML frontend to generate Juniper firewall rules. by L137493 20200330 v1.1 -->
+<head>
+<style>
+textarea {
+	width: 70% ;
+	height: 200px;
+	
+}
+.AddrObj
+{ 
+align : left;
+}
+.svcObj
+{ 
+align : left ;
+}
+.creatobjdiv {
+	align: left;
+	width:80%;
+}
+.createfwrdiv {
+	align: left;
+	width:80% ;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  font-family: Helvetica;
+  font-size: small;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 220px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.button {
+  background-color: #B8DBDD;
+  transition-duration: 0.4s;
+  border-radius: 8px;
+}
+
+.button:active {
+ background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+.rndbutnhov:hover {
+background-color: #4CAF50; /* Green */
+color: white;
+}
+.blkbutton {
+  color: white;
+  transition-duration: 0.4s;
+  border-radius: 8px;
+  background-color: #555555;
+}
+
+.blkbutton:active {
+ background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+.blkbutnhov:hover {
+background-color: #f4511e;
+color: yellow;
+}
+
+</style>
+</head>
+<p><b><font size = "4" face="verdana" >Juniper firewall rules generator </font></b>
+<font size = "2" face="verdana" >version 1.1</font></p>
+<form id = "fwAddrObjForm" > 
+<div class="AddrObj" >
+
+	<p><h4> move your mouse pointer to (?) for hints </h4></p>
+	IP Object(s):<div class="tooltip">(?)<span class="tooltiptext">To create Address Set, enter multiple objects separated by comma in the IP Object text box</span>
+	</div>
+	<input size = "50" type="text" id="addrObjName" value="">
+	</p>
+<!--	<font size ="1" face = "verdana" >( To create Address Set, enter multiple objects separated by comma in the IP Object text box)</font> </p>
+-->	
+	IP or Subnet address : <input type="text" id="ipaddr" value=""></p>
+	Address Book Name <div class="tooltip">(?):<span class="tooltiptext">Leave it as "global" or clear it.</span>
+	</div> 
+	<input type="text" id="addrbookname" value="global"></p> 
+	Create address set from above object</p>
+	Address set name : <input type="text" name="addrsetname" value=""></p>
+
+</div>
+</form>
+
+<h3>Generate firewall objects for Junos OS, copy and paste into the command line console</h3>      
+<p>
+<button class="button rndbutnhov" onclick = 'genAddrObjs()' > create Address objects </button>
+<button class="button rndbutnhov" onclick = 'createAddrSet()' >Create Address GROUP</button>
+
+<p><button class="blkbutton blkbutnhov" onclick = 'clearTXTAreaObjs("fwAddrObjTXT")' >Reset Address objects</button></p>
+<textarea id="fwAddrObjTXT" >
+</textarea>
+</p>
+
+<form id = "fwSvcObjForm" >
+<div class="SvcObj">
+ 
+<p><h4> Create application object, leave the word "default" for default value or empty if not needed </h4></p>
+
+	Port name :<div class="tooltip">(?)<span class="tooltiptext" >For Application Set(Group), enter in above text box a list of port names separated by comma</span>
+	</div>
+	<input type="text" id="portname" value=""></p>
+	tcp or udp : <input type="text" id="SvcProtocol" value="tcp"></p>
+	source port(or range):<div class="tooltip">(?)<span class="tooltiptext" >Leave it as "default" (0-65535)</span>
+	</div>
+	<input type="text" id="srcport" value="default"></p>
+	Destination port number or range :<input type="text" id="destport" value=""></p>
+	Inactivity timeout :<div class="tooltip">(?)<span class="tooltiptext" >Leave it as "default"(tcp-1800secs, udp-60secs), or (seconds | never), Range: 4 through 86400 seconds.</span>
+	</div>
+	<input type="text" id="inactivetimer" value="default"></p>
+	Application Set Name: <input type="text" id="svcSet" value=""></p>
+	<br>
+</div>
+</form>
+
+<p>
+<button class="button rndbutnhov" onclick = 'genportstatement()'> Create a single service object </button>
+<button class="button rndbutnhov" onclick = 'createSvcSet()' >Create application GROUP</button>
+</p>
+<p><button class="blkbutton blkbutnhov" onclick = 'clearTXTAreaObjs("fwSvcObjTXT")' >Reset Service objects</button></p>
+<textarea id="fwSvcObjTXT" >
+</textarea>
+</p>
+
+<form id = "fwPolicyForm" >
+<div class = "fwrules">
+<p><h3> Create security policy, fill in detail below : </h1></p>	
+	Policy Name :<input type="text" id="policyname" value="-Rule-"></p>
+	Is Global Policy ? <input type="checkbox" id="globalpolicy" value = "False" ></p>
+	Policy Description (double quote your entry):<input type="text" id="policydesc" value=""></p>
+	Enter source object(s) separated by comma:<input type="text" size = "80" id="source_object" value="any"></p>
+	Enter destination object(s) separated by comma:<input type="text" size = "80" id="destination_object" value="any"></p>
+	From Zone :<div class="tooltip">(?)<span class="tooltiptext" >For global rule, you can enter mulitple trust zones separated by comma</span>
+	</div>
+	<input type="text" id="from_zone" value="TRUST-zone"></p>
+	To Zone :<div class="tooltip">(?)<span class="tooltiptext" >For global rule, yon can enter mulitple trust zones separated by comma</span>
+	</div>
+	<input type="text" id="to_zone" value="UNTRUST-zone"></p>
+	<font size ="1" face = "verdana" >( Clear the above zone entry if global rule does not apply to any zone ) </font></p>
+	Port(s) separated by comma: <input type="text" size = "50" id="ports" value="any"></p>
+	Class of Service/Rule set name :<div class="tooltip">(?)<span class="tooltiptext" >Leave it as "none" if not required </span>
+	</div>
+	<input type="text" id="cosval" value="none"></p>
+	Action:<input type="text" id="action" value="permit"></p>
+	Log :<div class="tooltip">(?)<span class="tooltiptext" >Enter mulitple log options such as "session-init, session-close" separated by comma</span>
+	</div>
+	<input type="text" id="log" value="session-init"></p>
+	
+</div>
+</form>
+<p>Click the following button to generate firewall rules for Junos OS</p>
+<button class="button rndbutnhov" onclick = 'genFwPolicy()' >Generate firewall rules</button>
+<p>
+<p><button class="blkbutton blkbutnhov" onclick = 'clearTXTAreaObjs("fwrTXT")' >Clear Firewall Policies</button></p>
+<textarea id="fwrTXT" >
+</textarea>
+</p>
+
+</div>
+</form>
+<script type = "text/javascript">
+
+function clearTXTAreaObjs(objId) {
+	
+	document.getElementById(objId).innerHTML = "" ;
+
+}
+
+	
+
+function genAddrObjs() {
+
+	var form = document.getElementById("fwAddrObjForm") ;
+	var addressObj = form.addrObjName.value;
+	var ipaddress = form.ipaddr.value;
+	var addrBookName = form.addrbookname.value;
+	
+	document.getElementById("fwAddrObjTXT").innerHTML += "set security address-book " + addrBookName + " address " + addressObj + " " + ipaddress + "\n";
+	
+}
+
+
+function createAddrSet() {
+	
+	var form = document.getElementById("fwAddrObjForm") ;
+	var addressObj = form.addrObjName.value;
+	var addrSetName = form.addrsetname.value;
+	var addrBookName = form.addrbookname.value;
+	var addrObjList = form.addrObjName.value.split(",");
+	
+	for (i = 0; i < addrObjList.length; i ++ ) {
+	document.getElementById("fwAddrObjTXT").innerHTML += "set security address-book " + addrBookName + " address-set " + addrSetName + " address " + addrObjList[i] + "\n";
+	}
+
+}
+
+function genportstatement() {
+
+// set applications application tcp-30141-30142 protocol tcp destination-port 30141-30142 
+	var form = document.getElementById("fwSvcObjForm") ;
+	var portname = form.portname.value;
+	var porttype = form.SvcProtocol.value;
+	var portnum = form.destport.value;
+	var srcport = form.srcport.value;
+	var inactivetimer = form.inactivetimer.value;
+	
+	if ( srcport == "default"  ) {
+	
+		document.getElementById("fwSvcObjTXT").innerHTML += "set applications application " + portname + " protocol " + porttype + " destination-port " + portnum + "\n" ;
+	} else {
+		document.getElementById("fwSvcObjTXT").innerHTML += "set applications application " + portname + " protocol " + porttype + " source-port " + srcport + " destination-port " + portnum + "\n"
+	}
+	
+	if (inactivetimer != "default" ) {
+		document.getElementById("fwSvcObjTXT").innerHTML += "set applications application " + portname + " inactivity-timeout " + inactivetimer + "\n" ;
+	}	
+}
+
+function createSvcSet() {
+	
+	var form = document.getElementById("fwSvcObjForm") ;
+	var portname = form.portname.value;
+	var svcSetName = form.svcSet.value;
+	var portlist = form.portname.value.split(",");
+	
+	for (i = 0; i < portlist.length; i ++ ) {
+	document.getElementById("fwSvcObjTXT").innerHTML += "set applications application-set " + svcSetName + " application " +  portlist[i] + "\n" ;
+	}
+}
+
+
+function genFwPolicy() {
+
+	var form = document.getElementById("fwPolicyForm") ; 
+	var isglobalpolicy =form.globalpolicy.checked;
+	var is_global ; 
+		
+	if (isglobalpolicy == true) {
+	
+		genGlobalPolicy();
+		
+	} else {
+		
+		genSecPolicy();
+	}
+
+}
+
+function genGlobalPolicy() {
+
+	var form = document.getElementById("fwPolicyForm") ; 
+	var policyname = form.policyname.value;
+	var policydesc = form.policydesc.value;
+	var srcobj = form.source_object;
+	var frmzone = form.from_zone;
+	var dstobj = form.destination_object;
+	var tozone = form.to_zone;
+	var ports = form.ports;
+	var action = form.action.value;
+	var logopt = form.log.value.split(",");
+	var cosval = form.cosval.value ;
+	
+	var srcobjs = srcobj.value.split(",");
+	var fromzoneobjs = frmzone.value.split(",");
+	var tozoneobjs = tozone.value.split(",");
+	var dstobjs = dstobj.value.split(",");
+	var ports = ports.value.split(",");
+	
+	if ( policydesc != "" ) {
+	
+	document.getElementById("fwrTXT").innerHTML += "set security policies global policy " + policyname + " description " + policydesc + "\n";
+	}
+	
+	for (i = 0; i < srcobjs.length; i ++ ) { 
+		
+		document.getElementById("fwrTXT").innerHTML += "set security policies global policy " + policyname + " match source-address " + srcobjs[i] + "\n" ;
+	}
+	
+	
+	for (j = 0; j < dstobjs.length; j++ ){
+		document.getElementById("fwrTXT").innerHTML += "set security policies global policy " + policyname + " match destination-address " +dstobjs[j] + "\n";
+	}
+	
+
+	for (m = 0; m < ports.length; m ++ ) {
+		document.getElementById("fwrTXT").innerHTML += "set security policies global policy " + policyname + " match application " + ports[m] + "\n" ;
+	}
+	
+	if ( fromzoneobjs == "" || tozoneobjs == "" ) {
+		// do nothing
+	} else {
+		
+			for (k = 0; k < fromzoneobjs.length; k++ ) {
+				document.getElementById("fwrTXT").innerHTML += "set security policies global policy " + policyname + " match from-zone " + fromzoneobjs[k] + "\n";
+			}
+			for (n = 0; n < tozoneobjs.length; n++ ) {
+				document.getElementById("fwrTXT").innerHTML += "set security policies global policy " + policyname + " match to-zone " + tozoneobjs[n] + "\n";
+			}
+	}
+	
+	document.getElementById("fwrTXT").innerHTML += "set security policies global policy " + policyname + " then " + action + "\n" ;
+	
+	for (x = 0; x < logopt.length; x++ ) {
+	document.getElementById("fwrTXT").innerHTML += "set security policies global policy " + policyname + " then log " + logopt[x] + "\n" ;
+    }
+
+}
+
+function genSecPolicy() {
+	
+	var form = document.getElementById("fwPolicyForm"); 
+	var policyname = form.policyname.value;
+	var policydesc = form.policydesc.value;
+	var srcobj = form.source_object;
+	var frmzone = form.from_zone.value;
+	var dstobj = form.destination_object;
+	var tozone = form.to_zone.value;
+	var ports = form.ports;
+	var action = form.action.value;
+	var logopt = form.log.value.split(",");
+	var cosval = form.cosval.value ;
+	var srcobjs = srcobj.value.split(",");
+	var dstobjs = dstobj.value.split(",");
+	var ports = ports.value.split(",");
+	
+	if ( policydesc != "" ) {
+		document.getElementById("fwrTXT").innerHTML += "set security policies from-zone " + frmzone + " to-zone " + tozone + " policy " + policyname + " description " + policydesc + "\n";
+	}
+	
+	for (i = 0; i < srcobjs.length; i ++ ) { 
+		document.getElementById("fwrTXT").innerHTML += "set security policies from-zone " + frmzone + " to-zone " + tozone + " policy " + policyname + " match source-address " + srcobjs[i] + "\n" ;
+	}
+	
+	
+	for (j = 0; j < dstobjs.length; j++ ){
+		document.getElementById("fwrTXT").innerHTML += "set security policies from zone " + frmzone + " to-zone " + tozone + " policy " + policyname + " match destination-address " +dstobjs[j] + "\n";
+	}
+	
+	
+	for (k = 0; k < ports.length; k ++ ) {
+		document.getElementById("fwrTXT").innerHTML += "set security policies from-zone " + frmzone + " to-zone " + tozone + " policy " + policyname + " match application " + ports[k] + "\n" ;
+	}
+	
+	
+	if ( cosval == 'none' ) { 
+			document.getElementById("fwrTXT").innerHTML += "set security policies from-zone " + frmzone + " to-zone " + tozone + " policy " + policyname + " then " + action + "\n";
+	} else {
+			document.getElementById("fwrTXT").innerHTML += "set security policies from-zone " + frmzone + " to-zone " + tozone + " policy " + policyname + " then " + action + " application-services application-traffic-control rule-set " + cosval + "\n";
+	}	
+	
+	for (x = 0; x < logopt.length; x++ ) {
+	document.getElementById("fwrTXT").innerHTML += "set security policies from-zone " + frmzone + " to-zone " + tozone + " policy " + policyname + " then log " + logopt[x] + "\n" ;
+   }
+
+}
+</script>
+</html>
