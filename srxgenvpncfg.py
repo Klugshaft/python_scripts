@@ -88,6 +88,14 @@ def getvpncfg(custtbl):
         print('set security ike proposal',custtbl['p1_proposal'],'authentication-algorithm',custtbl['auth_algo'])
         print('set security ike proposal',custtbl['p1_proposal'],'encryption-algorithm',custtbl['enc_algo'])
         print('set security ike proposal',custtbl['p1_proposal'],'dh-group',custtbl['dh_group'])
+        
+ #       -------IKE phase 2 - IPsec Proposal definition /define if not already exisi/-----
+        print('\n---------IPSec P2 proposal configuration---------\n')
+        print('set security ipsec proposal',custtbl['p2_proposal_name'], 'lifetime-seconds',custtbl['p2_lifetime_secs'])
+        print('set security ipsec proposal',custtbl['p2_proposal_name'], 'protocol',custtbl['p2_protocol'])
+        print('set security ipsec proposal',custtbl['p2_proposal_name'], 'authentication-algorithm',custtbl['p2_auth_algo'])
+        print('set security ipsec proposal',custtbl['p2_proposal_name'], 'encryption-algorithm',custtbl['p2_enc_algo'])
+
 
 #       ----------Phase 1 policy definition-----------
         print('\n---------Phase 1 policy configuration----------\n')
@@ -96,12 +104,6 @@ def getvpncfg(custtbl):
         print('set security ike policy',custtbl['ike_policy_name'],'mode',custtbl['p1_mode'])
         print('set security ike policy',custtbl['ike_policy_name'],custtbl['auth_method'],'ascii-text "',custtbl['p1_preshared_key'],'"')
 
-#       -------IKE phase 2 - IPsec Proposal definition /define if not already exisi/-----
-        print('\n---------IPSec P2 proposal configuration---------\n')
-        print('set security ipsec proposal',custtbl['p2_proposal_name'], 'lifetime-seconds',custtbl['p2_lifetime_secs'])
-        print('set security ipsec proposal',custtbl['p2_proposal_name'], 'protocol',custtbl['p2_protocol'])
-        print('set security ipsec proposal',custtbl['p2_proposal_name'], 'authentication-algorithm',custtbl['p2_auth_algo'])
-        print('set security ipsec proposal',custtbl['p2_proposal_name'], 'encryption-algorithm',custtbl['p2_enc_algo'])
 
 #       ---------IKE P1 Remote Gateway configuration---------
         print('\n---------Phase 1 IKE Gateway configuration----------\n')
@@ -115,6 +117,8 @@ def getvpncfg(custtbl):
 
         if custtbl['NAT_keepalive'] == "":
             pass
+        elif custtbl['NAT_keepalive'] == "none" :
+            print('set security ike gateway' ,custtbl['p1_ike_gateway_name'] , 'no-nat-traversal')
         else :
             print('set security ike gateway' ,custtbl['p1_ike_gateway_name'] , 'nat-keepalive' ,custtbl['NAT_keepalive'])
 
