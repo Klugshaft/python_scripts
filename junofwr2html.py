@@ -64,6 +64,7 @@ def ft_lsys_fwr(pcnt, fwr_arr_prefix, fwrdict):
 ## convert show configuration security policy | display json
 
     lsysfwrlist = []
+    global_fwr = []
 
     rcnt = len(fwr_arr_prefix['security']['policies']['policy'][pcnt]['policy'])
     #print("there are ", rcnt,  "of rules")
@@ -71,6 +72,18 @@ def ft_lsys_fwr(pcnt, fwr_arr_prefix, fwrdict):
     policy_zone = fwr_arr_prefix['security']['policies']['policy'][pcnt]
     from_zone = policy_zone['from-zone-name']
     to_zone = policy_zone['to-zone-name']
+
+    ## extract just one global policy for the time being
+    global_policy = fwr_arr_prefix['security']['policies']['global']['policy'][0]
+
+    global_policy_rules = {}
+
+    global_policy_rules['global_policy name'] = global_policy['name']
+    global_policy_rules['source'] = global_policy['match']['source-address']
+    global_policy_rules['destination'] = global_policy['match']['destination-address']
+    global_policy_rules['application'] = global_policy['match']['application']
+    global_policy_rules['action'] = list(global_policy['then'])[0]
+    global_policy_rules['log'] = list(global_policy['then']['log'])[0]
 
     for rule in range(rcnt):
 
@@ -115,11 +128,14 @@ def ft_lsys_fwr(pcnt, fwr_arr_prefix, fwrdict):
         lsysfwr['traffic_ruleset'] = application_traffic_ruleset
         lsysfwr['log'] = policy_log_option
 
+
         lsysfwrlist.append(lsysfwr)
+
+    global_fwr.append(global_policy_rules)
 
     #print(lsysfwrlist)
 
-    return lsysfwrlist
+    return lsysfwrlist, global_fwr
 
 
 
@@ -161,11 +177,15 @@ if __name__ == '__main__':
         for zn in range(zcnt) :
             fwrarray = []
             fwr_in_zone = ft_lsys_fwr(zn, fwr_arr_prefix, fwrdict)
-            fwrarray.append(fwr_in_zone)
-            #print(fwrarray)
+            fwrarray.append(fwr_in_zone[0])
             lsysfwrjson = json.dumps(fwrarray)
             fwr_in_html = json2html.convert( json = lsysfwrjson )
             htmlfile.write(fwr_in_html)
 
+    ## appending global firewall rule
+        global_fwr_json = json.dumps(fwr_in_zone[1])
+        global_fwr_html = json2html.convert(json = global_fwr_json)
+        htmlfile.write(global_fwr_html)
 
     htmlfile.close()
+
