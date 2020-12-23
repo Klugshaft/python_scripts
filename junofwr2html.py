@@ -1,6 +1,7 @@
 ##  Generate Junper firewall rules in LSYS or without LSYS into  HTML
 ##  please run 'show configuration security policies | display json | no-more ' to get the json formatted rule
 ## then just include, save only what is in between curly the braces { } in the json file
+## 23/12/20 - added separate function to extract global firewall rules
 ## written by  - Calvin Kwok, Oct2020
 
 import json
@@ -59,31 +60,17 @@ def decode_fwr_in_json() :
 
 
 
-def ft_lsys_fwr(pcnt, fwr_arr_prefix, fwrdict):
+def ft_lsys_fwr(pcnt, fwr_arr_prefix):
 
 ## convert show configuration security policy | display json
 
     lsysfwrlist = []
-    global_fwr = []
-
     rcnt = len(fwr_arr_prefix['security']['policies']['policy'][pcnt]['policy'])
     #print("there are ", rcnt,  "of rules")
 
     policy_zone = fwr_arr_prefix['security']['policies']['policy'][pcnt]
     from_zone = policy_zone['from-zone-name']
     to_zone = policy_zone['to-zone-name']
-
-    ## extract just one global policy for the time being
-    global_policy = fwr_arr_prefix['security']['policies']['global']['policy'][0]
-
-    global_policy_rules = {}
-
-    global_policy_rules['global_policy name'] = global_policy['name']
-    global_policy_rules['source'] = global_policy['match']['source-address']
-    global_policy_rules['destination'] = global_policy['match']['destination-address']
-    global_policy_rules['application'] = global_policy['match']['application']
-    global_policy_rules['action'] = list(global_policy['then'])[0]
-    global_policy_rules['log'] = list(global_policy['then']['log'])[0]
 
     for rule in range(rcnt):
 
@@ -131,13 +118,71 @@ def ft_lsys_fwr(pcnt, fwr_arr_prefix, fwrdict):
 
         lsysfwrlist.append(lsysfwr)
 
-    global_fwr.append(global_policy_rules)
+    return lsysfwrlist
 
-    #print(lsysfwrlist)
+def ft_global_fwr(gfwr_arr_prefix):
 
-    return lsysfwrlist, global_fwr
+## convert show configuration security policy | display json
 
+    globalfwrlist = []
 
+    ## extract global policy
+    try:
+
+        global_policy = gfwr_arr_prefix['security']['policies']['global']['policy']
+    except (TypeError, IndexError, KeyError) :
+        print("global policy does not exist!")
+        global_fwr = {}
+    else:
+        rcnt = len(gfwr_arr_prefix['security']['policies']['global']['policy'])
+        print("there are ",rcnt," global policy")
+
+        rnum = 0
+        for grule in range(rcnt):
+
+            global_fwr = {}
+            rnum  = rnum + 1
+            rule_id = global_policy[grule]
+            policy_name = rule_id['name']
+
+            src_objs_list = rule_id['match']['source-address']
+            dst_objs_list = rule_id['match']['destination-address']
+            app_objs_list = rule_id['match']['application']
+
+            num_src_objs = len(src_objs_list)
+            num_dst_objs = len(dst_objs_list)
+            num_app_objs = len(app_objs_list)
+
+            source_objects = [ src_objs_list[i] for i in range(num_src_objs) ]
+            dest_objects = [ dst_objs_list[i] for i in range(num_dst_objs) ]
+            service_objs = [ app_objs_list[i] for i in range(num_app_objs) ]
+
+            policy_action = list(rule_id['then'])[0]
+
+            try :
+
+                policy_log_option = list(rule_id['then']['log'])[0]
+            except  (TypeError, IndexError, KeyError) :
+                policy_log_option = ""
+
+            try :
+                application_traffic_ruleset = rule_id['then']['permit']['application-services']['application-traffic-control']['rule-set']
+
+            except (TypeError, IndexError, KeyError) :
+                application_traffic_ruleset = ""
+
+            global_fwr['num'] = rnum
+            global_fwr['policy_name'] = policy_name
+            global_fwr['source_objects'] = source_objects
+            global_fwr['dest_objects'] = dest_objects
+            global_fwr['service'] = service_objs
+            global_fwr['action'] = policy_action
+            global_fwr['traffic_ruleset'] = application_traffic_ruleset
+            global_fwr['log'] = policy_log_option
+
+            globalfwrlist.append(global_fwr)
+
+    return globalfwrlist
 
 if __name__ == '__main__':
     main()
@@ -174,18 +219,17 @@ if __name__ == '__main__':
         htmlfile.write('Commited on {} \n'.format(fwrdict['configuration']['@']['junos:commit-localtime']))
 
         # start extracting rules in different set of src & dest zones
-        for zn in range(zcnt) :
-            fwrarray = []
+        fwrarray = []
+        for zn in range(zcnt) : 
             fwr_in_zone = ft_lsys_fwr(zn, fwr_arr_prefix, fwrdict)
             fwrarray.append(fwr_in_zone[0])
-            lsysfwrjson = json.dumps(fwrarray)
-            fwr_in_html = json2html.convert( json = lsysfwrjson )
-            htmlfile.write(fwr_in_html)
-
-    ## appending global firewall rule
-        global_fwr_json = json.dumps(fwr_in_zone[1])
-        global_fwr_html = json2html.convert(json = global_fwr_json)
-        htmlfile.write(global_fwr_html)
-
+            
+        ## start with reformatting global firewall rules 
+        gfwrules = ft_global_fwr(fwr_arr_prefix)
+        fwrarray.append(gfwrules)
+        allfwr_in_json = json.dumps(fwrarray)
+        fwr_in_html = json2html.convert( json = allfwr_in_json )
+        htmlfile.write(fwr_in_html)
+    
     htmlfile.close()
 
